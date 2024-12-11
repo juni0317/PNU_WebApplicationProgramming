@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kakao Video Search</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <form>
+        Enter a search keyword: 
+        <input type="text" id="userInputAreaKey" size="20" value="Korea"><br>
+        Enter a number of items to display:
+        <input type="text" id="userInputAreaMany" size="5" value="5"><br>
+        <input type="button" onclick="run()" value="Run"> 
+    </form>
+    <hr>
+    <table id="resultTable" border="1" style="display:none;">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Thumbnail</th>
+                <th>Title</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        function run() {
+            var userInput1 = document.getElementById("userInputAreaKey").value;
+            var userInput2 = parseInt(document.getElementById("userInputAreaMany").value);
+
+            var settings = {
+                "url": "https://dapi.kakao.com/v2/search/vclip?query=" + encodeURIComponent(userInput1),
+                "method": "GET",
+                "timeout": 0,
+                "headers": {
+                    "Authorization": "KakaoAK 6a1a6003b5d00dce61825790749cfcda"
+                },
+            };
+
+            $.ajax(settings).done(function (response) {
+                var items = response.documents; // JSON 응답에서 documents 배열 가져오기
+                var tbody = $("#resultTable tbody");
+                tbody.empty(); // 기존 결과 삭제
+
+                for (var i = 0; i < Math.min(userInput2, items.length); i++) {
+                    var item = items[i];
+                    var row = "<tr>";
+                    row += "<td>" + (i) + "</td>"; // 번호
+                    row += "<td><img src='" + item.thumbnail + "' width='100'></td>"; // 썸네일
+                    row += "<td>" + item.title + "</td>"; // 제목
+                    row += "<td><a href='" + item.url + "' target='_blank'>CLICK</a></td>"; // 링크
+                    row += "</tr>";
+                    tbody.append(row); // 테이블에 행 추가
+                }
+
+                // 결과 테이블 표시
+                $("#resultTable").show();
+            });
+        }
+    </script>
+</body>
+</html>
+

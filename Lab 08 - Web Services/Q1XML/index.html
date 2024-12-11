@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Data</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <script>
+        $(document).ready(function () {
+            // 오늘 날짜 가져오기
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = String(today.getMonth() + 1).padStart(2, '0'); // 0부터 시작하므로 1 더하기
+            var day = String(today.getDate()).padStart(2, '0');
+            var base_date = year + month + day;
+
+            // 요청할 API URL
+            var settings = {
+                "url": "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?ServiceKey=gb%2Bb3uvoyVSbVGHu4U988uK6tgyI%2BM2to8hNw6knP25qztY3E7dnY6ISe5mrWbWXsU7DJ3DUtBU76I5zip4d3g%3D%3D&pageNo=1&numOfRows=4&dataType=XML&base_date=" + base_date + "&base_time=0600&nx=55&ny=127",
+                "method": "GET",
+                "timeout": 0,
+            };
+
+            $.ajax(settings).done(function (response) {
+                // XML 데이터 처리
+                var xml = $(response);
+                var items = xml.find("item");
+                
+                // 테이블 작성
+                document.write("<table border='1'>");
+                document.write("<tr><th>Date</th><th>Time</th><th>X</th><th>Y</th><th>Category</th><th>Observed Value</th></tr>");
+
+                items.each(function () {
+                    var date = $(this).find("baseDate").text();
+                    var time = $(this).find("baseTime").text();
+                    var x = $(this).find("nx").text();
+                    var y = $(this).find("ny").text();
+                    var category = $(this).find("category").text();
+                    var obsValue = $(this).find("obsrValue").text();
+
+                    document.write("<tr>");
+                    document.write("<td>" + date + "</td>");
+                    document.write("<td>" + time + "</td>");
+                    document.write("<td>" + x + "</td>");
+                    document.write("<td>" + y + "</td>");
+                    document.write("<td>" + category + "</td>");
+                    document.write("<td>" + obsValue + "</td>");
+                    document.write("</tr>");
+                });
+
+                document.write("</table>");
+            });
+        });
+    </script>
+</body>
+</html>
